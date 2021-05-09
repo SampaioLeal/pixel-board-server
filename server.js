@@ -1,4 +1,4 @@
-const io = require("socket.io")(3001, { cors: { origin: "*" } });
+const io = require("socket.io")(3003, { cors: { origin: "*" } });
 
 function getRandomColor() {
   const randomColor = Math.floor(Math.random() * 16777215).toString(16);
