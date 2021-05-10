@@ -10,6 +10,10 @@ function notifyAll() {
   io.emit("update", project);
 }
 
+function notifyAllButOne(socket) {
+  socket.broadcast.emit("update", project);
+}
+
 /**
  * IPlayer {
  *   id: string
@@ -38,9 +42,11 @@ class Sketch {
     notifyAll();
   };
 
-  paintPixel = (line, column, color) => {
-    this.pixels[line][column] = color;
-    notifyAll();
+  paintPixel = (socket) => {
+    return (line, column, color) => {
+      this.pixels[line][column] = color;
+      notifyAllButOne(socket);
+    };
   };
 }
 
@@ -51,9 +57,7 @@ io.on("connection", (socket) => {
 
   project.refreshPlayers();
 
-  socket.on("paint", project.paintPixel);
+  socket.on("paint", project.paintPixel(socket));
 
-  socket.on("disconnect", () => {
-    project.refreshPlayers();
-  });
+  socket.on("disconnect", project.refreshPlayers);
 });
